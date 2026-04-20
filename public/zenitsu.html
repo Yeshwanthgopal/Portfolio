@@ -104,7 +104,12 @@ function initGame() {
   zoms = []; crows = []; sparks = [];
 }
 
+let lastJumpTime = 0;
 function doJump() {
+  const now = Date.now();
+  if (now - lastJumpTime < 100) return; // Debounce double triggers from mobile touchstart+mousedown
+  lastJumpTime = now;
+
   if (state==='OVER') return initGame();
   if (state!=='PLAY') return;
   if (player.jumps < 2) {
