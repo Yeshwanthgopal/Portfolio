@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 
@@ -27,8 +27,8 @@ export default function CaseStudyCredilinq({ onClose }: { onClose: () => void })
   const timelineRef = useRef(null);
   const timelineInView = useInView(timelineRef, { once: true, margin: "-150px" });
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+  
+  
 
   return (
     <motion.div
@@ -36,9 +36,7 @@ export default function CaseStudyCredilinq({ onClose }: { onClose: () => void })
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 20 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-0 z-[9999] bg-[#03030c] overflow-y-auto overflow-x-hidden text-zinc-300 font-sans cursor-default"
-      onMouseMove={handleMouseMove}
-    >
+      className="fixed inset-0 z-[9999] bg-[#03030c] overflow-y-auto overflow-x-hidden text-zinc-300 font-sans cursor-default">
       <style>{`
         .shimmer-bg {
           position: relative;
@@ -260,7 +258,7 @@ export default function CaseStudyCredilinq({ onClose }: { onClose: () => void })
                 { step: "Hero Re-Architecture", desc: "Funding up to $2M, pricing from 1.5% per month, and the eligibility form — all visible without scrolling. Reduced uncertainty immediately." },
                 { step: "Visual Proof & Credibility", desc: "Brought $250M+ disbursed and 10,000+ sellers supported front and centre. Early validation before users commit to any action." },
                 { step: "Making the Offer Tangible", desc: "Connected the product to real seller goals: funding viral products, scaling TikTok ads, bridging payout gaps. Practical over abstract." },
-                { step: "Simplified 3-Step Flow", desc: "Apply → Fast Decision → Access Funds. A clear structure that makes the process feel lighter and easier to trust from the first glance." },
+                { step: "Simplified 3-Step Flow", desc: "Apply �' Fast Decision �' Access Funds. A clear structure that makes the process feel lighter and easier to trust from the first glance." },
                 { step: "Pricing & Control", desc: "No equity, no hidden fees, repayment aligned with payout cycles. Directly addressed the biggest source of hesitation in fintech products." },
               ].map((node, i) => (
                 <div key={i} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
@@ -324,11 +322,11 @@ export default function CaseStudyCredilinq({ onClose }: { onClose: () => void })
 
         {/* PULL QUOTE */}
         <section className="mb-40 flex items-center justify-center py-20 relative px-4">
-          <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">"</div>
+          <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">&quot;</div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05),transparent_50%)] pointer-events-none" />
           <div className="max-w-4xl text-center relative z-10">
             <h3 className="text-3xl md:text-5xl font-light text-white italic leading-tight mb-12">
-              "The redesigned CrediLinq page turns a complex financial product into a clear, credible, and conversion-ready experience — one that understands how TikTok sellers actually operate."
+              &quot;The redesigned CrediLinq page turns a complex financial product into a clear, credible, and conversion-ready experience — one that understands how TikTok sellers actually operate.&quot;
             </h3>
             <p className="text-zinc-500 font-mono uppercase tracking-widest text-sm">Design Strategy Conclusion</p>
           </div>

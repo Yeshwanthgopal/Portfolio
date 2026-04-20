@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 
@@ -30,9 +30,7 @@ const PhoneMockup = () => (
 
 export default function CaseStudySunstone({ onClose }: { onClose: () => void }) {
   
-  // Custom cursor logic for "magnetic" button feel
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+
 
   // For Timeline SVG drawing
   const timelineRef = useRef(null);
@@ -45,7 +43,7 @@ export default function CaseStudySunstone({ onClose }: { onClose: () => void }) 
       exit={{ opacity: 0, scale: 0.95, y: 20 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-[9999] bg-[#03030c] overflow-y-auto overflow-x-hidden text-zinc-300 font-sans cursor-default"
-      onMouseMove={handleMouseMove}
+
     >
       <style>{`
         .shimmer-bg {
@@ -294,11 +292,11 @@ export default function CaseStudySunstone({ onClose }: { onClose: () => void }) 
 
         {/* PULL QUOTE */}
         <section className="mb-40 flex items-center justify-center py-20 relative px-4">
-           <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">"</div>
+           <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">&quot;</div>
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05),transparent_50%)] pointer-events-none" />
            <div className="max-w-4xl text-center relative z-10">
               <h3 className="text-3xl md:text-5xl font-light text-white italic leading-tight mb-12">
-                "The new Sunstone site acts as a truly confident salesperson—answering buyer questions without confusion and turning casual interest into heavy, high-intent inquiries."
+                &quot;The new Sunstone site acts as a truly confident salesperson—answering buyer questions without confusion and turning casual interest into heavy, high-intent inquiries.&quot;
               </h3>
               <p className="text-zinc-500 font-mono uppercase tracking-widest text-sm">Design Strategy Conclusion</p>
            </div>

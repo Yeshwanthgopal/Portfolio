@@ -18,7 +18,7 @@ const irisLeftVariants = {
     transition: {
       duration: 4,
       times: [0, 0.1, 0.15, 0.35, 0.4, 0.6, 0.65, 1],
-      ease: "easeInOut"
+      ease: "easeInOut" as const
     }
   }
 };
@@ -30,7 +30,7 @@ const irisRightVariants = {
     transition: {
       duration: 4,
       times: [0, 0.1, 0.15, 0.35, 0.4, 0.6, 0.65, 1],
-      ease: "easeInOut"
+      ease: "easeInOut" as const
     }
   }
 };
@@ -179,7 +179,7 @@ export default function Preloader({ onFlash }: { onFlash: () => void }) {
 
           <div className="flex flex-col items-center">
             <p className="text-zinc-100 text-lg md:text-2xl font-serif max-w-3xl mx-auto italic leading-relaxed mb-6">
-              "{quote.text}"
+              &quot;{quote.text}&quot;
             </p>
             <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm drop-shadow-[0_0_12px_rgba(234,179,8,0.7)]">
               — {quote.author}

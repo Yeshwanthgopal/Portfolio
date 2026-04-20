@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 
@@ -21,8 +21,7 @@ export default function CaseStudyGemstower({ onClose }: { onClose: () => void })
   const timelineRef = useRef(null);
   const timelineInView = useInView(timelineRef, { once: true, margin: "-150px" });
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+
 
   return (
     <motion.div
@@ -31,7 +30,7 @@ export default function CaseStudyGemstower({ onClose }: { onClose: () => void })
       exit={{ opacity: 0, scale: 0.95, y: 20 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-[9999] bg-[#03030c] overflow-y-auto overflow-x-hidden text-zinc-300 font-sans cursor-default"
-      onMouseMove={handleMouseMove}
+
     >
       <style>{`
         .shimmer-bg {
@@ -272,7 +271,7 @@ export default function CaseStudyGemstower({ onClose }: { onClose: () => void })
                </div>
                <div className="p-8 bg-zinc-100/5 rounded-2xl border border-white/10">
                   <h4 className="text-yellow-500 font-medium text-lg mb-3">Trust-Driven Copy</h4>
-                  <p className="text-zinc-400 text-sm leading-relaxed">Replaced vague philosophical prose with plain English bullets. Focused copy directly answers what families want: "What will your day look like?".</p>
+                  <p className="text-zinc-400 text-sm leading-relaxed">Replaced vague philosophical prose with plain English bullets. Focused copy directly answers what families want: &quot;What will your day look like?&quot;.</p>
                </div>
             </div>
           </div>
@@ -313,11 +312,11 @@ export default function CaseStudyGemstower({ onClose }: { onClose: () => void })
 
         {/* PULL QUOTE */}
         <section className="mb-40 flex items-center justify-center py-20 relative px-4">
-          <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">"</div>
+          <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">&quot;</div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05),transparent_50%)] pointer-events-none" />
           <div className="max-w-4xl text-center relative z-10">
             <h3 className="text-3xl md:text-5xl font-light text-white italic leading-tight mb-12">
-              "The site acts as a confident guide—answering questions logically so prospective residents and children proceed down the funnel without confusion."
+              &quot;The site acts as a confident guide—answering questions logically so prospective residents and children proceed down the funnel without confusion.&quot;
             </h3>
             <p className="text-zinc-500 font-mono uppercase tracking-widest text-sm">Design Outcome</p>
           </div>
