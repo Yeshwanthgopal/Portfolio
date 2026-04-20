@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; user-select: none; }
+#game-canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="game-canvas"></canvas>
+<script>
+window.focus();
+document.body.onclick = () => window.focus();
+
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+let W = window.innerWidth; 
+let H = window.innerHeight;
+canvas.width = W;
+canvas.height = H;
+
+const SCALE = 2;
+let GROUND_Y = H - (H * 0.2); // Ground sits nicely at bottom 20%
+const JUMP_VEL = -24.0;
+const GRAVITY = 2.0;
+let loopId = null;
+
+// Dynamically handle resizing
+let bgCache = document.createElement('canvas');
+function buildBgCache() {
+   bgCache.width = W; bgCache.height = H;
+   let bctx = bgCache.getContext('2d');
+   let g = bctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#030312'); g.addColorStop(1,'#0a0a20');
+   bctx.fillStyle=g; bctx.fillRect(0,0,W,H);
+   let rg = bctx.createRadialGradient(W/2, GROUND_Y, 0, W/2, GROUND_Y, W/1.5);
+   rg.addColorStop(0, 'rgba(50, 20, 80, 0.4)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+   bctx.fillStyle=rg; bctx.fillRect(0,0,W,H);
+}
+buildBgCache();
+
+window.addEventListener('resize', () => {
+   W = window.innerWidth;
+   H = window.innerHeight;
+   canvas.width = W;
+   canvas.height = H;
+   GROUND_Y = H - (H * 0.2);
+   buildBgCache();
+   if(player && player.y >= GROUND_Y - player.h) {
+       player.y = GROUND_Y - player.h;
+   }
+});
+
+const Z_COLOR = {
+    ' ': null,
+    'Y': '#FFD700', 'y': '#DAA520', 'P': '#FFDAB9', 'p': '#E6BE8A', 'B': '#111111',
+    'U': '#2C3E50', 'u': '#1A252F', 'C': '#F1C40F', 'R': '#E74C3C', 'W': '#ECF0F1',
+    'S': '#7F8C8D', 'w': '#BDC3C7', 'D': '#1C2833'
+};
+const ZOM_COLOR = { ' ': null, 'G': '#5DBB5D', 'g': '#3D8A3D', 'd': '#8AD68A', 'e': '#FF0000', 'D': '#1C2833', 'b': '#111111' };
+const CROW_COLOR = { ' ': null, 'B': '#111111', 'g': '#333333', 'y': '#FFD700', 'w': '#ECF0F1' };
+
+const Z_RUN_0 = [
+  "      Y      ","     YYY     ","   YYYYYYY   ","  yYYYYYYYy  ","  yYPP PPyy  ","   Y B B Y   ","   Y PpP Y   ",
+  "    PPPP     ","   CC U CC   ","  CCC U CCC  ","  CCC R CCC  "," C CC D CC C "," C CC D CC w "," C C D D C w ",
+  "   C D D C w ","    DD DD  ww","    DD DD    ","    WW WW    ","    WW WW    ","    SS SS    ","    SS SS    ","   SSS SSS   "
+];
+const Z_RUN_1 = [
+  "      Y      ","     YYY     ","   YYYYYYY   ","  yYYYYYYYy  ","  yYPP PPyy  ","   Y B B Y   ","   Y PpP Y   ",
+  "    PPPP     ","   CC U CC   ","  CCC U CCC  ","  CCC R CCC  "," C CC D CC C "," C CC D CC w "," C C D D C w ",
+  "   C D   C w ","    DD     ww","    WW DD    ","    WW WW    ","    SS WW    ","   SSS SS    ","       SS    ","      SSS    "
+];
+const Z_JUMP = [
+  "      Y      ","     YYY     ","   YYYYYYY   ","  yYYYYYYYy  ","  yYPP PPyy  ","   Y B B Y   ","   Y PpP Y   ",
+  "    PPPP     ","   CC U CC   ","  CCC U CCC  ","  C C R C C  "," C CC D CC C "," C C D D C C ","   C WWW C   ",
+  "     SSS     ","      u  w   ","         w   ","         w   ","         ww  ","             ","             ","             "
+];
+const ZOM_0 = [
+  "   GGGG   ","  gGGGGg  ","  G e e G ","  G GgG G ","   GGGG   ","   DDDD   ","GG DDDD GG","GG DDDD GG"," d DDDD d ","   DDDD   ",
+  "   DDDD   ","   DDDD   ","   DDDD   ","   D  D   ","   D  D   ","   D  D   ","   D  D   ","   D  D   ","  bb  bb  "," bbb  bbb "
+];
+const ZOM_1 = [
+  "   GGGG   ","  gGGGGg  ","  G e e G ","  G GgG G ","   GGGG   ","   DDDD   ","GG DDDD   ","GG DDDD   "," d DDDD   ","   DDDD GG",
+  "   DDDD GG","   DDDD d ","   DDDD   ","   D  D   ","   D  D   ","  bb  D   "," bbb  D   ","      bb  ","      bbb ","          "
+];
+const CROW_0 = [
+  "  gg        "," gggg       ","  gg   BB   ","      BwBBy ","     BBBBB  ","    BBBBB   ","      B B   ","            "
+];
+const CROW_1 = [
+  "            ","       BB   ","      BwBBy "," ggggBBBBB  ","gggggBBBB   ","  gg BBB    ","      B B   ","            "
+];
+
+let frames=0, gameSpeed=3.0, nextSpawnGap=50, score=0, state='PLAY', flashAlpha=0, groundX=0, lastSpawnFrame=0;
+let highScore = parseInt(localStorage.getItem('zenHS')||'0');
+const player = { x: 55, y: GROUND_Y - 22*SCALE, w: 13*SCALE, h: 22*SCALE, vy: 0, jumps: 0 };
+let zoms = [], crows = [], sparks = [], stars = [];
+
+for(let i=0; i<55; i++) stars.push({ x: Math.random()*W, y: Math.random()*GROUND_Y, s: Math.random()>0.8?2:1 });
+
+function initGame() {
+  frames=0; score=0; gameSpeed=10.0; state='PLAY'; flashAlpha=0; groundX=0; lastSpawnFrame=0; nextSpawnGap=35;
+  player.y = GROUND_Y - player.h; player.vy=0; player.jumps=0;
+  zoms = []; crows = []; sparks = [];
+}
+
+function doJump() {
+  if (state==='OVER') return initGame();
+  if (state!=='PLAY') return;
+  if (player.jumps < 2) {
+    player.vy = JUMP_VEL; player.jumps++; flashAlpha = 0.25;
+    let cx = player.x + player.w/2, cy = player.y + player.h/2;
+    for(let i=0; i<18; i++) {
+       let a = Math.random()*Math.PI*2, spd = 1.5 + Math.random()*5;
+       sparks.push({
+         x: cx, y: cy, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd,
+         life: 1.0, dec: 0.05 + Math.random()*0.05,
+         c: Math.random()>0.5 ? '#FFD700' : '#FFFFFF',
+         hist: [{x:cx,y:cy}]
+       });
+    }
+  }
+}
+
+function aabb(r1, r2) {
+  let ins = 2*SCALE;
+  return !(r1.x+ins > r2.x+r2.w-ins || r1.x+r1.w-ins < r2.x+ins || r1.y+ins > r2.y+r2.h-ins || r1.y+r1.h-ins < r2.y+ins);
+}
+
+function update() {
+  if(state!=='PLAY') return;
+  frames++; score++;
+  
+  // Smooth, manageable speed ramp ensuring players can react
+  gameSpeed = 10.0 + Math.min(score / 300, 10.0);
+  
+  groundX -= gameSpeed; if(groundX<=-20) groundX+=20;
+  player.y += player.vy; player.vy += GRAVITY;
+  if(player.y >= GROUND_Y - player.h) { player.y = GROUND_Y - player.h; player.vy=0; player.jumps=0; }
+  
+  if (frames - lastSpawnFrame >= nextSpawnGap) {
+    lastSpawnFrame = frames;
+    
+    // Real score displayed on screen is score/10
+    // Introduce crows linearly
+    if (score / 10 > 50 && Math.random() < 0.25) {
+       crows.push({ x: W, y: GROUND_Y - 45*SCALE, w: 12*SCALE, h: 8*SCALE });
+       // Gap after a crow must be slightly larger to allow player to land
+       nextSpawnGap = Math.max(40, 50 - (score / 200)) + Math.random() * 20; 
+    } else {
+       zoms.push({ x: W, y: GROUND_Y - 20*SCALE, w: 10*SCALE, h: 20*SCALE });
+       
+       // Squeeze zombies close, but maintain fair margins
+       let minGap = Math.max(25, 40 - (score / 300));
+       let gapSlack = Math.max(15, 35 - (score / 300));
+       nextSpawnGap = minGap + Math.random() * gapSlack;
+    }
+  }
+  
+  for(let i=zoms.length-1; i>=0; i--) {
+     let z = zoms[i]; z.x -= gameSpeed;
+     if(aabb(player, z)) { state='OVER'; if(score/10 > highScore) { highScore = Math.floor(score/10); localStorage.setItem('zenHS', highScore); } }
+     if(z.x+z.w < 0) zoms.splice(i,1);
+  }
+  
+  for(let i=crows.length-1; i>=0; i--) {
+     let c = crows[i]; c.x -= (gameSpeed + 1.2); // Crows fly slightly faster
+     if(aabb(player, c)) { state='OVER'; if(score/10 > highScore) { highScore = Math.floor(score/10); localStorage.setItem('zenHS', highScore); } }
+     if(c.x+c.w < 0) crows.splice(i,1);
+  }
+  for(let i=sparks.length-1; i>=0; i--) {
+     let s = sparks[i]; s.x += s.vx; s.y += s.vy; s.vy += 0.1; s.life -= s.dec;
+     s.hist.push({ x: s.x + (Math.random()-0.5)*8, y: s.y + (Math.random()-0.5)*8 });
+     if(s.hist.length > 3) s.hist.shift();
+     if(s.life <= 0) sparks.splice(i,1);
+  }
+  if (flashAlpha > 0) flashAlpha -= 0.025;
+}
+
+function prerenderSprite(arr, m) {
+  let c = document.createElement('canvas');
+  c.width = arr[0].length * SCALE; c.height = arr.length * SCALE;
+  let xc = c.getContext('2d');
+  for(let r=0; r<arr.length; r++) {
+    for(let col=0; col<arr[r].length; col++) {
+      let cl = m[arr[r][col]]; if(cl) { xc.fillStyle=cl; xc.fillRect(col*SCALE, r*SCALE, SCALE, SCALE); }
+    }
+  }
+  return c;
+}
+const SPRITES = {
+  Z_RUN_0: prerenderSprite(Z_RUN_0, Z_COLOR), Z_RUN_1: prerenderSprite(Z_RUN_1, Z_COLOR), Z_JUMP: prerenderSprite(Z_JUMP, Z_COLOR),
+  ZOM_0: prerenderSprite(ZOM_0, ZOM_COLOR), ZOM_1: prerenderSprite(ZOM_1, ZOM_COLOR),
+  CROW_0: prerenderSprite(CROW_0, CROW_COLOR), CROW_1: prerenderSprite(CROW_1, CROW_COLOR)
+};
+
+function pad(n) { return Math.floor(n).toString().padStart(5,'0'); }
+
+function draw() {
+  ctx.drawImage(bgCache, 0, 0);
+  
+  for(let s of stars) {
+      // Use integers for sharp rendering
+      ctx.fillStyle=`rgba(255,255,255,${0.3 + Math.sin(frames/30 + s.x)*0.5})`; 
+      ctx.fillRect(Math.floor(s.x), Math.floor(s.y), s.s, s.s); 
+  }
+  if(flashAlpha>0) { ctx.fillStyle=`rgba(255,215,0,${flashAlpha})`; ctx.fillRect(0,0,W,H); }
+  
+  ctx.fillStyle='#FFD700'; ctx.fillRect(0, Math.floor(GROUND_Y), W, 2);
+  ctx.fillStyle='#B8860B'; 
+  for(let i=0; i<30; i++) { 
+      ctx.fillRect(Math.floor(groundX) + i*20, Math.floor(GROUND_Y)+6, 10, 2); 
+  }
+  
+  if(sparks.length>6) {
+     let cx = Math.floor(player.x+player.w/2), cy = Math.floor(player.y+player.h/2);
+     let crg = ctx.createRadialGradient(cx,cy,0, cx,cy,60);
+     crg.addColorStop(0,'rgba(255,215,0,0.5)'); crg.addColorStop(1,'rgba(255,215,0,0)');
+     ctx.fillStyle=crg; ctx.fillRect(cx-60, cy-60, 120, 120);
+  }
+  for(let s of sparks) {
+      ctx.beginPath(); ctx.strokeStyle=s.c; ctx.lineWidth=2; ctx.globalAlpha=s.life;
+      for(let i=0; i<s.hist.length; i++) { 
+          let sx = Math.floor(s.hist[i].x), sy = Math.floor(s.hist[i].y);
+          if(i===0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy); 
+      }
+      ctx.stroke(); ctx.globalAlpha=1;
+  }
+  
+  let pf = SPRITES.Z_RUN_0;
+  if(player.y < GROUND_Y - player.h - 1) pf = SPRITES.Z_JUMP;
+  else if(Math.floor(frames/7)%2) pf = SPRITES.Z_RUN_1;
+  ctx.drawImage(pf, Math.floor(player.x), Math.floor(player.y));
+  
+  for(let z of zoms) ctx.drawImage(Math.floor(frames/9)%2 ? SPRITES.ZOM_1 : SPRITES.ZOM_0, Math.floor(z.x), Math.floor(z.y));
+  for(let c of crows) ctx.drawImage(Math.floor(frames/6)%2 ? SPRITES.CROW_1 : SPRITES.CROW_0, Math.floor(c.x), Math.floor(c.y));
+  
+  ctx.font = "bold 16px 'Courier New'"; ctx.fillStyle = "#FFD700"; ctx.textAlign = "right"; ctx.fillText(pad(score/10), W-15, 25);
+  ctx.font = "bold 12px 'Courier New'"; ctx.fillStyle = "#DAA520"; ctx.fillText(`HI ${pad(highScore)}`, W-15, 42);
+  
+  if(state==='OVER') {
+     ctx.fillStyle='rgba(4,4,12,0.85)'; ctx.fillRect(0,0,W,H);
+     ctx.fillStyle='#050510'; ctx.fillRect(W/2-100, H/2-60, 200, 120);
+     ctx.strokeStyle='#FFD700'; ctx.lineWidth=2; ctx.strokeRect(W/2-100, H/2-60, 200, 120);
+     ctx.fillStyle='#FFD700';
+     ctx.fillRect(W/2-102, H/2-62, 4, 4); ctx.fillRect(W/2+98, H/2-62, 4, 4); ctx.fillRect(W/2-102, H/2+58, 4, 4); ctx.fillRect(W/2+98, H/2+58, 4, 4);
+     ctx.textAlign='center';
+     ctx.fillStyle='#FF0000'; ctx.font="bold 24px 'Courier New'"; ctx.fillText("GAME OVER", W/2, H/2-25);
+     ctx.fillStyle='#FFD700'; ctx.font="bold 20px 'Courier New'"; ctx.fillText(pad(score/10), W/2, H/2+5);
+     ctx.fillStyle='#DAA520'; ctx.font="12px 'Courier New'"; ctx.fillText("SPACE / CLICK - RETRY", W/2, H/2+35);
+  }
+}
+let lastTime = 0;
+const FPS = 60;
+const frameDuration = 1000 / FPS;
+
+function loop(timestamp) { 
+  loopId = requestAnimationFrame(loop); 
+  if (!timestamp) timestamp = 0;
+  
+  const delta = timestamp - lastTime;
+  if (delta >= frameDuration) {
+     // Strictly cap rendering to 60 iterations per second regardless of monitor refresh rate
+     lastTime = timestamp - (delta % frameDuration);
+     update(); 
+     draw(); 
+  }
+}
+initGame(); 
+loopId = requestAnimationFrame(loop);
+
+window.addEventListener('mousedown', doJump);
+window.addEventListener('keydown', (e) => { 
+  if(e.code==='Space') { 
+    e.preventDefault(); 
+    doJump(); 
+  } 
+});
+</script>
+</body>
+</html>

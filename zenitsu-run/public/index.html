@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenitsu Run</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #03030f;
+            background: linear-gradient(to bottom, #03030f, #0a0a20);
+            color: #FFD700;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #landing {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, #03030f, #0a0a20);
+        }
+
+        .title {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 20px #FFD700, 0 0 40px #FF8C00;
+            animation: pulse 2s infinite alternate;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% { text-shadow: 0 0 20px #FFD700, 0 0 40px #FF8C00; transform: scale(1); }
+            100% { text-shadow: 0 0 30px #FFE4B5, 0 0 60px #FFA500, 0 0 80px #FF8C00; transform: scale(1.05); }
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #FFD700;
+            color: #FFD700;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #FFD700;
+            color: #03030f;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        #gameContainer {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* The game window: 560x210 */
+        #gameCanvas {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            border: 2px solid #FFD700;
+            background-color: transparent;
+            position: relative;
+        }
+
+        /* Glowing brackets around canvas */
+        .bracket {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 10px #FFD700;
+        }
+        .bracket.tl { top: -5px; left: -5px; border-right: none; border-bottom: none; }
+        .bracket.tr { top: -5px; right: -5px; border-left: none; border-bottom: none; }
+        .bracket.bl { bottom: -5px; left: -5px; border-right: none; border-top: none; }
+        .bracket.br { bottom: -5px; right: -5px; border-left: none; border-top: none; }
+
+        .hint {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #DAA520;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(218, 165, 32, 0.5);
+        }
+
+        #gameOverOverlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 3, 15, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .go-panel {
+            border: 2px solid #FFD700;
+            padding: 30px 50px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            text-align: center;
+            position: relative;
+            background: #050510;
+        }
+
+        .go-title {
+            color: #FF3333;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #FF0000;
+        }
+
+        .go-score {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .go-hint {
+            font-size: 1rem;
+            color: #DAA520;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="landing">
+        <div class="title">⚡ ZENITSU RUN ⚡</div>
+        <button id="playBtn">WANNA PLAY A GAME? ⚡</button>
+    </div>
+
+    <div id="gameContainer">
+        <div class="bracket tl"></div>
+        <div class="bracket tr"></div>
+        <canvas id="gameCanvas" width="560" height="210"></canvas>
+        <div class="bracket bl"></div>
+        <div class="bracket br"></div>
+        <div class="hint">SPACE or CLICK / TAP TO JUMP ⚡ DOUBLE JUMP ENABLED</div>
+
+        <div id="gameOverOverlay">
+            <div class="go-panel">
+                <div class="bracket tl"></div>
+                <div class="bracket tr"></div>
+                <div class="go-title">GAME OVER</div>
+                <div class="go-score" id="goScoreDisplay">0</div>
+                <div class="go-hint">SPACE / CLICK — RETRY</div>
+                <div class="bracket bl"></div>
+                <div class="bracket br"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const landing = document.getElementById('landing');
+        const playBtn = document.getElementById('playBtn');
+        const gameContainer = document.getElementById('gameContainer');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOverOverlay = document.getElementById('gameOverOverlay');
+        const goScoreDisplay = document.getElementById('goScoreDisplay');
+
+        // Game Constants & Configuration
+        const LOGICAL_SCALE = 2; // Real px per logical px
+        const W = canvas.width;
+        const H = canvas.height;
+        const GROUND_Y = 170; // Real pixels
+        const JUMP_FORCE = -12.5;
+        const GRAVITY = 0.6;
+        let gameLoopId;
+        
+        // Sprite definitions (Character strings map to colors)
+        const ZENITSU_COLORS = {
+            ' ': null,
+            'Y': '#FFD700', 'y': '#DAA520', // Hair
+            'P': '#FFDAB9', 'p': '#E6BE8A', // Skin
+            'B': '#111111',                 // Black
+            'U': '#2C3E50', 'u': '#1A252F', // Uniform
+            'C': '#F1C40F',                 // Haori
+            'R': '#E74C3C',                 // Belt
+            'W': '#ECF0F1',                 // Socks
+            'S': '#7F8C8D',                 // Shoes
+            'w': '#BDC3C7'                  // Sword
+        };
+
+        const ZEN_RUN_0 = [
+            "      Y      ",
+            "     YYY     ",
+            "   YYYYYYY   ",
+            "  yYYYYYYYy  ",
+            "  yYPP PPyy  ",
+            "   Y B B Y   ",
+            "   Y PpP Y   ",
+            "    PPPP     ",
+            "   CC U CC   ",
+            "  CCC U CCC  ",
+            "  CCC R CCC  ",
+            " C CC U CC C ",
+            " C CC u CC w ",
+            " C C u u C w ",
+            "   C u u C w ",
+            "    uu uu  ww",
+            "    uu uu    ",
+            "    WW WW    ",
+            "    WW WW    ",
+            "    SS SS    ",
+            "    SS SS    ",
+            "   SSS SSS   "
+        ]; // 13x22
+        
+        const ZEN_RUN_1 = [
+            "      Y      ",
+            "     YYY     ",
+            "   YYYYYYY   ",
+            "  yYYYYYYYy  ",
+            "  yYPP PPyy  ",
+            "   Y B B Y   ",
+            "   Y PpP Y   ",
+            "    PPPP     ",
+            "   CC U CC   ",
+            "  CCC U CCC  ",
+            "  CCC R CCC  ",
+            " C CC U CC C ",
+            " C CC U CC w ",
+            " C C U u C w ",
+            "   C u   C w ",
+            "    uu     ww",
+            "    WW uu    ",
+            "    WW WW    ",
+            "    SS WW    ",
+            "   SSS SS    ",
+            "       SS    ",
+            "      SSS    "
+        ];
+        
+        const ZEN_JUMP = [
+            "      Y      ",
+            "     YYY     ",
+            "   YYYYYYY   ",
+            "  yYYYYYYYy  ",
+            "  yYPP PPyy  ",
+            "   Y B B Y   ",
+            "   Y PpP Y   ",
+            "    PPPP     ",
+            "   CC U CC   ",
+            "  CCC U CCC  ",
+            "  C C R C C  ",
+            " C CC U CC C ",
+            " C C u u C C ",
+            "   C WWW C   ",
+            "     SSS     ",
+            "      u  w   ",
+            "         w   ",
+            "         w   ",
+            "         ww  ",
+            "             ",
+            "             ",
+            "             "
+        ];
+
+        const ZOMBIE_COLORS = {
+            ' ': null,
+            'G': '#5DBB5D', 'g': '#3D8A3D', 'd': '#8AD68A',
+            'R': '#E74C3C',
+            'D': '#2C3E50',
+            'b': '#111111'
+        };
+
+        const ZOMBIE_RUN_0 = [
+            "   GGGG   ",
+            "  gGGGGg  ",
+            "  G R R G ",
+            "  G GgG G ",
+            "   GGGG   ",
+            "   DDDD   ",
+            "GG DDDD GG",
+            "GG DDDD GG",
+            " d DDDD d ",
+            "   DDDD   ",
+            "   DDDD   ",
+            "   DDDD   ",
+            "   DDDD   ",
+            "   D  D   ",
+            "   D  D   ",
+            "   D  D   ",
+            "   D  D   ",
+            "   D  D   ",
+            "  bb  bb  ",
+            " bbb  bbb "
+        ]; // 10x20
+
+        const ZOMBIE_RUN_1 = [
+            "   GGGG   ",
+            "  gGGGGg  ",
+            "  G R R G ",
+            "  G GgG G ",
+            "   GGGG   ",
+            "   DDDD   ",
+            "GG DDDD   ",
+            "GG DDDD   ",
+            " d DDDD   ",
+            "   DDDD GG",
+            "   DDDD GG",
+            "   DDDD d ",
+            "   DDDD   ",
+            "   D  D   ",
+            "   D  D   ",
+            "  bb  D   ",
+            " bbb  D   ",
+            "      bb  ",
+            "      bbb ",
+            "          "
+        ];
+
+        // State Variables
+        let frames = 0;
+        let gameSpeed = 4.5;
+        let spawnTimer = 0;
+        let currentSpawnInterval = 85;
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('zenHighScore') || '0');
+        let gameState = 'START'; // START, PLAY, OVER
+        let flashAlpha = 0;
+        let groundScroll = 0;
+
+        // Player object
+        const player = {
+            x: 55,       // Real px
+            y: GROUND_Y - (22 * LOGICAL_SCALE),
+            vy: 0,
+            width: 13 * LOGICAL_SCALE,
+            height: 22 * LOGICAL_SCALE,
+            jumps: 0,
+            maxJumps: 2
+        };
+
+        // Entities
+        let zombies = [];
+        let sparks = [];
+        let stars = [];
+
+        // Pre-generate stars
+        for(let i=0; i<40; i++) {
+            stars.push({
+                x: Math.random() * W,
+                y: Math.random() * (GROUND_Y - 50),
+                size: Math.random() > 0.8 ? 2 : 1,
+                alpha: Math.random(),
+                twinkleSpeed: 0.02 + Math.random() * 0.05
+            });
+        }
+
+        function drawPixelSprite(ctx, spriteArr, colorMap, px, py, scale) {
+            for(let row = 0; row < spriteArr.length; row++) {
+                for(let col = 0; col < spriteArr[row].length; col++) {
+                    const char = spriteArr[row][col];
+                    if (colorMap[char]) {
+                        ctx.fillStyle = colorMap[char];
+                        ctx.fillRect(px + col * scale, py + row * scale, scale, scale);
+                    }
+                }
+            }
+        }
+
+        function triggerJump() {
+            if (gameState === 'PLAY' && player.jumps < player.maxJumps) {
+                player.vy = JUMP_FORCE;
+                player.jumps++;
+                spawnLightning();
+                flashAlpha = 0.5; // Brief golden flash
+            } else if (gameState === 'OVER') {
+                resetGame();
+            }
+        }
+
+        function spawnLightning() {
+            const numSparks = 18;
+            const cx = player.x + player.width / 2;
+            const cy = player.y + player.height / 2;
+            
+            for(let i = 0; i < numSparks; i++) {
+                const angle = (Math.PI * 2 / numSparks) * i + (Math.random()*0.2);
+                sparks.push({
+                    x: cx,
+                    y: cy,
+                    vx: Math.cos(angle) * (3 + Math.random() * 5),
+                    vy: Math.sin(angle) * (3 + Math.random() * 5),
+                    life: 1.0,
+                    decay: 0.04 + Math.random() * 0.03,
+                    gravity: 0.1,
+                    color: Math.random() > 0.5 ? '#FFD700' : '#FFFFFF',
+                    history: [{x: cx, y: cy}]
+                });
+            }
+        }
+
+        function hitBoxAABB(act1, act2) {
+            // Inset by 2 logical pixels = 4 real pixels
+            const INSET = 4;
+            return !(
+                act1.x + INSET > act2.x + act2.width - INSET ||
+                act1.x + act1.width - INSET < act2.x + INSET ||
+                act1.y + INSET > act2.y + act2.height - INSET ||
+                act1.y + act1.height - INSET < act2.y + INSET
+            );
+        }
+
+        function update() {
+            if (gameState !== 'PLAY') return;
+
+            frames++;
+            score += 0.1;
+
+            // Difficulty Scaling
+            if (frames % 250 === 0) {
+                if (gameSpeed < 12) gameSpeed += 0.4;
+                if (currentSpawnInterval > 45) currentSpawnInterval -= 4;
+            }
+
+            // Ground scroll
+            groundScroll -= gameSpeed;
+            if (groundScroll <= -15) groundScroll += 15;
+
+            // Player physics
+            player.y += player.vy;
+            player.vy += GRAVITY;
+
+            // Ground collision
+            const groundLimit = GROUND_Y - player.height;
+            if (player.y >= groundLimit) {
+                player.y = groundLimit;
+                player.vy = 0;
+                player.jumps = 0;
+            }
+
+            // Zombies Spawning
+            spawnTimer++;
+            if (spawnTimer >= currentSpawnInterval) {
+                spawnTimer = 0;
+                zombies.push({
+                    x: W,
+                    y: GROUND_Y - (20 * LOGICAL_SCALE),
+                    width: 10 * LOGICAL_SCALE,
+                    height: 20 * LOGICAL_SCALE
+                });
+            }
+
+            // Update Zombies
+            for (let i = zombies.length - 1; i >= 0; i--) {
+                const z = zombies[i];
+                z.x -= gameSpeed;
+
+                if (hitBoxAABB(player, z)) {
+                    gameOver();
+                }
+
+                if (z.x + z.width < 0) {
+                    zombies.splice(i, 1);
+                }
+            }
+
+            // Update Sparks
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const s = sparks[i];
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vy += s.gravity;
+                s.life -= s.decay;
+
+                // Zigzag offset
+                s.history.push({
+                    x: s.x + (Math.random() - 0.5) * 6,
+                    y: s.y + (Math.random() - 0.5) * 6
+                });
+                if (s.history.length > 4) s.history.shift();
+
+                if (s.life <= 0) sparks.splice(i, 1);
+            }
+
+            // Update stars
+            for (let s of stars) {
+                s.alpha += s.twinkleSpeed;
+                if (s.alpha > 1 || s.alpha < 0.2) s.twinkleSpeed *= -1;
+            }
+
+            // Flash decay
+            if (flashAlpha > 0) flashAlpha -= 0.05;
+        }
+
+        function fillPad(num, size) {
+            let s = Math.floor(num) + "";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
+        function draw() {
+            // Clear sky
+            ctx.clearRect(0, 0, W, H);
+            
+            // Draw Stars
+            for(let s of stars) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+                ctx.fillRect(s.x, s.y, s.size, s.size);
+            }
+
+            // Flash effect
+            if (flashAlpha > 0) {
+                ctx.fillStyle = `rgba(255, 215, 0, ${flashAlpha})`;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // Ground Line
+            ctx.beginPath();
+            ctx.strokeStyle = '#B8860B'; // Dim gold
+            ctx.lineWidth = 2;
+            ctx.setLineDash([10, 5]);
+            ctx.moveTo(groundScroll, GROUND_Y);
+            ctx.lineTo(W + 15, GROUND_Y);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset
+
+            // Sparks / Soft Radial Glow
+            if (sparks.length > 0) {
+                const cx = player.x + player.width / 2;
+                const cy = player.y + player.height / 2;
+                const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+                grad.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
+                grad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(cx - 60, cy - 60, 120, 120);
+
+                // Draw zigzag bolts
+                for(let s of sparks) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = s.color;
+                    ctx.lineWidth = 2;
+                    ctx.globalAlpha = s.life;
+                    for(let i=0; i<s.history.length; i++) {
+                        if (i === 0) ctx.moveTo(s.history[i].x, s.history[i].y);
+                        else ctx.lineTo(s.history[i].x, s.history[i].y);
+                    }
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+
+            // Draw Player
+            let pSprite = ZEN_RUN_0;
+            if (player.y < GROUND_Y - player.height - 1) {
+                pSprite = ZEN_JUMP;
+            } else {
+                pSprite = Math.floor(frames / 7) % 2 === 0 ? ZEN_RUN_0 : ZEN_RUN_1;
+            }
+            drawPixelSprite(ctx, pSprite, ZENITSU_COLORS, player.x, player.y, LOGICAL_SCALE);
+
+            // Draw Zombies
+            for (let z of zombies) {
+                const zSprite = Math.floor(frames / 9) % 2 === 0 ? ZOMBIE_RUN_0 : ZOMBIE_RUN_1;
+                drawPixelSprite(ctx, zSprite, ZOMBIE_COLORS, z.x, z.y, LOGICAL_SCALE);
+            }
+
+            // HUD
+            ctx.font = "bold 16px 'Courier New'";
+            ctx.fillStyle = "#FFD700";
+            ctx.textAlign = "right";
+            ctx.fillText(fillPad(score, 5), W - 10, 25);
+            
+            ctx.font = "bold 12px 'Courier New'";
+            ctx.fillStyle = "#DAA520";
+            ctx.fillText(`HI ${fillPad(highScore, 5)}`, W - 10, 42);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            landing.style.display = 'none';
+            gameContainer.style.display = 'flex';
+            resetGame();
+        }
+
+        function resetGame() {
+            frames = 0;
+            score = 0;
+            gameSpeed = 4.5;
+            spawnTimer = 0;
+            currentSpawnInterval = 85;
+            zombies = [];
+            sparks = [];
+            player.y = GROUND_Y - (22 * LOGICAL_SCALE);
+            player.vy = 0;
+            player.jumps = 0;
+            gameState = 'PLAY';
+            gameOverOverlay.style.display = 'none';
+            flashAlpha = 0;
+            groundScroll = 0;
+            
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            gameLoop();
+        }
+
+        function gameOver() {
+            gameState = 'OVER';
+            if (Math.floor(score) > highScore) {
+                highScore = Math.floor(score);
+                localStorage.setItem('zenHighScore', highScore);
+            }
+            goScoreDisplay.innerText = fillPad(score, 5);
+            gameOverOverlay.style.display = 'flex';
+        }
+
+        // Event Listeners
+        playBtn.addEventListener('click', startGame);
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                triggerJump();
+            }
+        });
+        window.addEventListener('mousedown', (e) => {
+            if (e.target.tagName !== 'BUTTON') { // Prevent conflict with play button
+                triggerJump();
+            }
+        });
+
+    </script>
+</body>
+</html>
