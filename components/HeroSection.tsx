@@ -384,14 +384,23 @@ export default function HeroSection() {
 
         {/* ZENITSU RUN MODAL (IFRAME) */}
         {isGameOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md pointer-events-auto">
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md pointer-events-auto"
+            onPointerDown={() => {
+              const iframe = document.getElementById("zenitsu-game-iframe") as HTMLIFrameElement;
+              if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage("JUMP", "*");
+              }
+            }}
+          >
             <div className="relative w-[95%] max-w-[800px] h-[400px] md:h-[500px] bg-zinc-950 border-4 border-yellow-500 rounded-xl shadow-[0_0_80px_rgba(234,179,8,0.3)] overflow-hidden flex flex-col">
               
               {/* Custom Header Bar */}
               <div className="bg-zinc-900 border-b border-yellow-500/30 px-4 py-3 flex justify-between items-center z-10">
                 <span className="text-yellow-500 font-bold tracking-widest" style={{ fontFamily: "'Courier New', Courier, monospace" }}>ZENITSU_RUN.EXE</span>
                 <button 
-                  onClick={() => setIsGameOpen(false)}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); setIsGameOpen(false); }}
                   className="text-zinc-400 hover:text-red-500 transition-colors pointer-events-auto"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -401,6 +410,7 @@ export default function HeroSection() {
               {/* Game Iframe */}
               <div className="flex-1 w-full relative bg-[#03030f]">
                  <iframe 
+                   id="zenitsu-game-iframe"
                    src="/zenitsu.html" 
                    className="absolute inset-0 w-full h-full border-0" 
                    title="Zenitsu Run Canvas Game"

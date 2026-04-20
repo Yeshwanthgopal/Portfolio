@@ -270,8 +270,17 @@ initGame();
 loopId = requestAnimationFrame(loop);
 
 window.addEventListener('mousedown', doJump);
+window.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  doJump();
+}, { passive: false });
+
+window.addEventListener('message', (e) => {
+  if (e.data === 'JUMP') doJump();
+});
+
 window.addEventListener('keydown', (e) => { 
-  if(e.code==='Space') { 
+  if(e.code==='Space' || e.code==='ArrowUp') { 
     e.preventDefault(); 
     doJump(); 
   } 
