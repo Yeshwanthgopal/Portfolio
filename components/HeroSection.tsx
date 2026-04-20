@@ -120,18 +120,8 @@ export default function HeroSection() {
 
   const socialLinks = [
     {
-      name: "Dribbble",
-      url: "#",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#ea4c89]">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path>
-        </svg>
-      )
-    },
-    {
       name: "Instagram",
-      url: "#",
+      url: "https://www.instagram.com/_.the._designer_/",
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E1306C]">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -142,7 +132,7 @@ export default function HeroSection() {
     },
     {
       name: "LinkedIn",
-      url: "#",
+      url: "https://www.linkedin.com/in/yeshwanth-gopal-jaladi-b55011181",
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0a66c2]">
           <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
@@ -153,7 +143,7 @@ export default function HeroSection() {
     },
     {
       name: "Behance",
-      url: "#",
+      url: "https://www.behance.net/JalYeGo",
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-[#1769ff]">
           <path d="M21.99 15.3v-.9c0-3.3-1.62-5.7-5.12-5.7-3.69 0-5.32 2.66-5.32 6.03 0 3.39 1.8 5.97 5.75 5.97 3.3 0 4.95-1.92 5.09-4.2h-2.1c-.24 1.29-1.38 1.95-2.91 1.95-1.74 0-2.82-1.02-2.97-3.15h7.58zm-7.53-2.1c.21-1.68 1.26-2.61 2.52-2.61 1.35 0 2.25.93 2.37 2.61h-4.89z"/>
