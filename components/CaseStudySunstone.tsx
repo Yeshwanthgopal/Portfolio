@@ -6,7 +6,7 @@ import { motion, useInView } from "framer-motion";
 
 // --- CSS Device Mockups ---
 const BrowserMockup = () => (
-  <a href="https://sunstone.co.in" target="_blank" rel="noopener noreferrer" className="block w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(234,179,8,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.25)] hover:-translate-y-2 cursor-pointer">
+  <a href="https://sunstone.co.in" target="_blank" rel="noopener noreferrer" className="block w-[90%] md:w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(234,179,8,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.25)] hover:-translate-y-2 cursor-pointer">
     <div className="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 space-x-2">
       <div className="w-3 h-3 rounded-full bg-zinc-700 hover:bg-red-500 transition-colors" />
       <div className="w-3 h-3 rounded-full bg-zinc-700 hover:bg-yellow-500 transition-colors" />
@@ -18,7 +18,7 @@ const BrowserMockup = () => (
 );
 
 const PhoneMockup = () => (
-  <a href="https://sunstone.co.in" target="_blank" rel="noopener noreferrer" className="block mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(234,179,8,0.2)] w-[344px] relative hover:-translate-y-2 transition-transform duration-700 cursor-pointer">
+  <a href="https://sunstone.co.in" target="_blank" rel="noopener noreferrer" className="block mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(234,179,8,0.2)] w-[280px] sm:w-[320px] md:w-[344px] relative hover:-translate-y-2 transition-transform duration-700 cursor-pointer">
     {/* Notch */}
     <div className="w-32 h-6 bg-zinc-900 mx-auto rounded-b-xl absolute top-0 left-1/2 -translate-x-1/2 z-10" />
     {/* eslint-disable-next-line @next/next/no-img-element */}

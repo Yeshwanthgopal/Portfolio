@@ -6,7 +6,7 @@ import { motion, useInView } from "framer-motion";
 
 // --- CSS Device Mockups ---
 const BrowserMockup = () => (
-  <a href="/CrediLinq TikTok Landing Page.pdf" target="_blank" rel="noopener noreferrer" className="block w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(234,179,8,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.25)] hover:-translate-y-2 cursor-pointer relative group">
+  <a href="/CrediLinq TikTok Landing Page.pdf" target="_blank" rel="noopener noreferrer" className="block w-[90%] md:w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(234,179,8,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.25)] hover:-translate-y-2 cursor-pointer relative group">
     <div className="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 space-x-2 relative z-20">
       <div className="w-3 h-3 rounded-full bg-zinc-700 hover:bg-red-500 transition-colors" />
       <div className="w-3 h-3 rounded-full bg-zinc-700 hover:bg-yellow-500 transition-colors" />

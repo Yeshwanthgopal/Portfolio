@@ -6,27 +6,23 @@ import { motion, useInView } from "framer-motion";
 
 // --- CSS Device Mockups ---
 const BrowserMockup = () => (
-  <a href="https://beconversive.com" target="_blank" rel="noopener noreferrer" className="block w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(168,85,247,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.15)] hover:-translate-y-2 cursor-pointer relative group">
+  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[90%] md:w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(168,85,247,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.15)] hover:-translate-y-2 cursor-pointer relative group">
     <div className="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 space-x-2 relative z-10">
       <div className="w-3 h-3 rounded-full bg-zinc-700 group-hover:bg-red-500 transition-colors" />
       <div className="w-3 h-3 rounded-full bg-zinc-700 group-hover:bg-yellow-500 transition-colors" />
       <div className="w-3 h-3 rounded-full bg-zinc-700 group-hover:bg-green-500 transition-colors" />
     </div>
-    <div className="h-[400px] md:h-[600px] bg-zinc-950 relative overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/conversive.png" alt="Conversive Desktop Mockup" className="absolute inset-0 w-full h-full object-cover object-top" />
-    </div>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/conversive.png" alt="Conversive Desktop Mockup" className="w-full h-auto block relative z-0" />
   </a>
 );
 
 const PhoneMockup = () => (
-  <a href="https://beconversive.com" target="_blank" rel="noopener noreferrer" className="block w-[280px] h-[580px] mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(168,85,247,0.2)] hover:-translate-y-2 transition-transform duration-700 cursor-pointer relative group">
+  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[280px] sm:w-[320px] mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(168,85,247,0.2)] hover:-translate-y-2 transition-transform duration-700 cursor-pointer relative group">
     {/* Notch */}
     <div className="w-32 h-6 bg-zinc-900 absolute top-0 left-1/2 -translate-x-1/2 rounded-b-xl z-20" />
-    <div className="h-full w-full bg-zinc-950 relative overflow-hidden">
-       {/* eslint-disable-next-line @next/next/no-img-element */}
-       <img src="/conversive-mobile.png" alt="Conversive Mobile Mockup" className="absolute inset-0 w-full h-full object-cover object-top" />
-    </div>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/conversive-mobile.png" alt="Conversive Mobile Mockup" className="w-full h-auto block" />
   </a>
 );
 
