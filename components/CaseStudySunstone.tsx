@@ -28,7 +28,7 @@ const PhoneMockup = () => (
 
 // --- Component Exports ---
 
-export default function CaseStudySunstone({ onClose }: { onClose: () => void }) {
+export default function CaseStudySunstone({ onClose, onNext }: { onClose: () => void, onNext?: () => void }) {
   
 
 
@@ -318,7 +318,7 @@ export default function CaseStudySunstone({ onClose }: { onClose: () => void }) 
           <button onClick={onClose} className="px-8 py-4 rounded-full bg-zinc-900 border border-white/10 text-white font-medium hover:bg-zinc-800 transition-colors">
             Return to Portfolio
           </button>
-          <button className="px-8 py-4 rounded-full bg-yellow-500 text-black font-bold shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_40px_rgba(234,179,8,0.6)] transition-all hover:scale-105">
+          <button onClick={onNext} className="px-8 py-4 rounded-full bg-yellow-500 text-black font-bold shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_40px_rgba(234,179,8,0.6)] transition-all hover:scale-105">
             Next Project
           </button>
         </div>

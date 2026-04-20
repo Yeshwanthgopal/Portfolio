@@ -56,6 +56,17 @@ export default function Projects() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const projectOrder = ["Conversive", "Gemstower", "Sunstone", "Credilinq"];
+  const handleNext = () => {
+    if (!activeProject) return;
+    const currentIndex = projectOrder.indexOf(activeProject);
+    const nextIndex = (currentIndex + 1) % projectOrder.length;
+    // We scroll back to top optionally or just set the new project
+    // Framer motion might take care of the enter animation but we should make sure window scrolls to top
+    window.scrollTo(0, 0);
+    setActiveProject(projectOrder[nextIndex]);
+  };
+
   return (
     <>
     <section className="relative z-20 bg-zinc-950 min-h-screen py-20 md:py-32 px-4 md:px-8 border-t border-white/5 text-zinc-100">
@@ -105,16 +116,16 @@ export default function Projects() {
     
     <AnimatePresence>
       {activeProject === "Conversive" && (
-        <CaseStudyConversive onClose={() => setActiveProject(null)} />
+        <CaseStudyConversive onClose={() => setActiveProject(null)} onNext={handleNext} />
       )}
       {activeProject === "Sunstone" && (
-        <CaseStudySunstone onClose={() => setActiveProject(null)} />
+        <CaseStudySunstone onClose={() => setActiveProject(null)} onNext={handleNext} />
       )}
       {activeProject === "Gemstower" && (
-        <CaseStudyGemstower onClose={() => setActiveProject(null)} />
+        <CaseStudyGemstower onClose={() => setActiveProject(null)} onNext={handleNext} />
       )}
       {activeProject === "Credilinq" && (
-        <CaseStudyCredilinq onClose={() => setActiveProject(null)} />
+        <CaseStudyCredilinq onClose={() => setActiveProject(null)} onNext={handleNext} />
       )}
     </AnimatePresence>
     </>
