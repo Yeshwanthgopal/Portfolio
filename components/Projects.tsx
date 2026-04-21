@@ -66,22 +66,26 @@ export default function Projects() {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("hashchange", handleHashChange);
     
-    // Initial check
-    handleHashChange();
+    // Check hash on mount, but only after hydration is likely complete
+    const timeout = setTimeout(handleHashChange, 0);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("hashchange", handleHashChange);
+      clearTimeout(timeout);
     };
   }, []);
 
   useEffect(() => {
     if (activeProject) {
-      window.location.hash = activeProject;
-    } else {
-      // Avoid adding extra empty hash if intentional
-      if (window.location.hash) {
-        window.history.pushState("", document.title, window.location.pathname + window.location.search);
+      if (window.location.hash !== `#${activeProject}`) {
+        window.location.hash = activeProject;
+      }
+    } else if (window.location.hash) {
+      // Clear hash if no project active
+      const hash = window.location.hash.replace("#", "");
+      if (projectOrder.includes(hash)) {
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
       }
     }
   }, [activeProject]);
