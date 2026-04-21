@@ -47,8 +47,10 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
         
-        .tilt-card { transform-style: preserve-3d; perspective: 1000px; }
-        .tilt-card:hover > div { transform: rotateX(5deg) rotateY(10deg); transition: transform 0.1s ease-out; }
+        @media (min-width: 1024px) {
+          .tilt-card { transform-style: preserve-3d; perspective: 1000px; }
+          .tilt-card:hover > div { transform: rotateX(5deg) rotateY(10deg); transition: transform 0.1s ease-out; }
+        }
 
         @keyframes shake {
           10%, 90% { transform: translate3d(-1px, 0, 0); }

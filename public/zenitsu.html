@@ -99,7 +99,7 @@ let zoms = [], crows = [], sparks = [], stars = [];
 for(let i=0; i<55; i++) stars.push({ x: Math.random()*W, y: Math.random()*GROUND_Y, s: Math.random()>0.8?2:1 });
 
 function initGame() {
-  frames=0; score=0; gameSpeed=10.0; state='PLAY'; flashAlpha=0; groundX=0; lastSpawnFrame=0; nextSpawnGap=35;
+  frames=0; score=0; gameSpeed=9.0; state='PLAY'; flashAlpha=0; groundX=0; lastSpawnFrame=0; nextSpawnGap=35;
   player.y = GROUND_Y - player.h; player.vy=0; player.jumps=0;
   zoms = []; crows = []; sparks = [];
 }
@@ -137,7 +137,7 @@ function update() {
   frames++; score++;
   
   // Smooth, manageable speed ramp ensuring players can react
-  gameSpeed = 10.0 + Math.min(score / 300, 10.0);
+  gameSpeed = 9.0 + Math.min(score / 300, 10.0);
   
   groundX -= gameSpeed; if(groundX<=-20) groundX+=20;
   player.y += player.vy; player.vy += GRAVITY;

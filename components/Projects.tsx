@@ -52,9 +52,38 @@ export default function Projects() {
         setActiveProject(null);
       }
     };
+
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (projectOrder.includes(hash)) {
+        setActiveProject(hash);
+      } else {
+        setActiveProject(null);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("hashchange", handleHashChange);
+    
+    // Initial check
+    handleHashChange();
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("hashchange", handleHashChange);
+    };
   }, []);
+
+  useEffect(() => {
+    if (activeProject) {
+      window.location.hash = activeProject;
+    } else {
+      // Avoid adding extra empty hash if intentional
+      if (window.location.hash) {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+      }
+    }
+  }, [activeProject]);
 
   const projectOrder = ["Conversive", "Gemstower", "Sunstone", "Credilinq"];
   const handleNext = () => {

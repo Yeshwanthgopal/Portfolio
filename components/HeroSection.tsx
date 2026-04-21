@@ -296,13 +296,13 @@ export default function HeroSection() {
 
             {/* ACTION BUTTONS */}
             <div className="slide-up-3 mt-4 md:mt-6 pointer-events-auto flex flex-wrap justify-center md:justify-start items-center gap-2 md:gap-4 w-full">
-              <button className="rounded-full bg-yellow-500 text-black font-semibold px-5 py-3 text-[13px] md:px-8 md:py-4 md:text-[16px] flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)]">
+              <a href="mailto:yeshwanthgopaljaladi@gmail.com" className="rounded-full bg-yellow-500 text-black font-semibold px-5 py-3 text-[13px] md:px-8 md:py-4 md:text-[16px] flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)]">
                 Let&apos;s collaborate 
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-[18px] md:h-[18px]">
                   <line x1="7" y1="17" x2="17" y2="7"></line>
                   <polyline points="7 7 17 7 17 17"></polyline>
                 </svg>
-              </button>
+              </a>
               
               <button 
                 onClick={() => setIsGameOpen(true)}
