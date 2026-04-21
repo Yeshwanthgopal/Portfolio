@@ -385,7 +385,7 @@ export default function HeroSection() {
         {/* ZENITSU RUN MODAL (IFRAME) */}
         {isGameOpen && (
           <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md pointer-events-auto"
+            className="fixed inset-0 z-[100] flex items-start md:items-center justify-center bg-black/90 backdrop-blur-md pointer-events-auto pt-16 md:pt-0"
             onPointerDown={() => {
               const iframe = document.getElementById("zenitsu-game-iframe") as HTMLIFrameElement;
               if (iframe && iframe.contentWindow) {

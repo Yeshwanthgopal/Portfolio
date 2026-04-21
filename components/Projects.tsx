@@ -44,6 +44,7 @@ export default function Projects() {
       logo: "/credilinq.png"
     }
   ];
+  const projectOrder = ["Conversive", "Gemstower", "Sunstone", "Credilinq"];
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   useEffect(() => {
@@ -80,12 +81,12 @@ export default function Projects() {
     } else {
       // Avoid adding extra empty hash if intentional
       if (window.location.hash) {
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+        window.history.pushState("", document.title, window.location.pathname + window.location.search);
       }
     }
   }, [activeProject]);
 
-  const projectOrder = ["Conversive", "Gemstower", "Sunstone", "Credilinq"];
+
   const handleNext = () => {
     if (!activeProject) return;
     const currentIndex = projectOrder.indexOf(activeProject);
