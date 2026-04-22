@@ -118,6 +118,43 @@ export default function HeroSection() {
     colorImgRef.current.style.opacity = "0";
   };
 
+  const handleCollaborate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const email = "yeshwanthgopaljaladi@gmail.com";
+    const mailtoUrl = `mailto:${email}`;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
+
+    // Detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isMobile = isIOS || isAndroid;
+
+    if (isMobile) {
+      if (isIOS) {
+        // Try to force Gmail app on iOS, fallback to mailto
+        window.location.href = `googlegmail:///co?to=${email}`;
+        setTimeout(() => {
+          if (document.hasFocus()) window.location.href = mailtoUrl;
+        }, 800);
+      } else {
+        window.location.href = mailtoUrl;
+      }
+    } else {
+      // Desktop: Open mailto first (triggers OS prompt)
+      window.location.href = mailtoUrl;
+      
+      // If user is still on page after 2 seconds, they either:
+      // 1. Don't have a mail app set up
+      // 2. Selected a browser that opened a blank page
+      // In these cases, we open Gmail web as the reliable fallback
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.open(gmailUrl, "_blank");
+        }
+      }, 2000);
+    }
+  };
+
   const socialLinks = [
     {
       name: "Instagram",
@@ -297,8 +334,8 @@ export default function HeroSection() {
             {/* ACTION BUTTONS */}
             <div className="slide-up-3 mt-4 md:mt-6 pointer-events-auto flex flex-wrap justify-center md:justify-start items-center gap-2 md:gap-4 w-full">
               <a 
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=yeshwanthgopaljaladi@gmail.com" 
-                target="_blank"
+                href="mailto:yeshwanthgopaljaladi@gmail.com" 
+                onClick={handleCollaborate}
                 className="rounded-full bg-yellow-500 text-black font-semibold px-5 py-3 text-[13px] md:px-8 md:py-4 md:text-[16px] flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)]"
               >
                 Let&apos;s collaborate 

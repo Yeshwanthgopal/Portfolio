@@ -33,6 +33,35 @@ export default function Home() {
     }
   }, []);
 
+  const handleCollaborate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const email = "yeshwanthgopaljaladi@gmail.com";
+    const mailtoUrl = `mailto:${email}`;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isMobile = isIOS || isAndroid;
+
+    if (isMobile) {
+      if (isIOS) {
+        window.location.href = `googlegmail:///co?to=${email}`;
+        setTimeout(() => {
+          if (document.hasFocus()) window.location.href = mailtoUrl;
+        }, 800);
+      } else {
+        window.location.href = mailtoUrl;
+      }
+    } else {
+      window.location.href = mailtoUrl;
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.open(gmailUrl, "_blank");
+        }
+      }, 2000);
+    }
+  };
+
   if (!isMounted) return <div className="min-h-screen bg-zinc-950" />;
 
   return (
@@ -49,7 +78,13 @@ export default function Home() {
           
           <footer className="py-16 border-t border-white/10 bg-zinc-950 text-center text-zinc-500 flex flex-col items-center gap-4">
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 font-mono text-sm uppercase tracking-widest text-zinc-400">
-              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=yeshwanthgopaljaladi@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors">yeshwanthgopaljaladi@gmail.com</a>
+              <a 
+                href="mailto:yeshwanthgopaljaladi@gmail.com" 
+                onClick={handleCollaborate}
+                className="hover:text-yellow-400 transition-colors"
+              >
+                yeshwanthgopaljaladi@gmail.com
+              </a>
               <span className="hidden md:inline text-zinc-700">•</span>
               <a href="tel:+918374141583" className="hover:text-yellow-400 transition-colors">+91 8374141583</a>
             </div>
