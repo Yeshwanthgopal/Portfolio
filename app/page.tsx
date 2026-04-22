@@ -39,7 +39,6 @@ export default function Home() {
     e.preventDefault();
     const email = "yeshwanthgopaljaladi@gmail.com";
     const mailtoUrl = `mailto:${email}`;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
