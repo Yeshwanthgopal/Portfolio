@@ -48,8 +48,36 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
         @keyframes shimmer { 100% { transform: translateX(100%); } }
         
         @media (min-width: 1024px) {
-          .tilt-card { transform-style: preserve-3d; perspective: 1000px; }
-          .tilt-card:hover > div { transform: rotateX(5deg) rotateY(10deg); transition: transform 0.1s ease-out; }
+          .laser-card {
+            position: relative;
+            transition: all 0.3s ease;
+          }
+          .laser-card::after {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: conic-gradient(from 0deg at 50% 50%, transparent 0%, #eab308 10%, transparent 20%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+          .laser-card:hover::after {
+            opacity: 1;
+            animation: spin 3s linear infinite;
+          }
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .laser-card:hover {
+            background: rgba(24, 24, 27, 0.6);
+            transform: translateY(-2px);
+          }
         }
 
         @keyframes shake {
@@ -214,7 +242,7 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
               </svg>
             </div>
 
-            <div className="space-y-16 relative perspective-[1000px] tilt-card">
+            <div className="space-y-16 relative">
               {[
                 { step: "Hero Trust Anchor", desc: "Added 'Managed by Elixir-Age Ventures India' immediately, establishing operator credibility before amenities." },
                 { step: "10 Reasons Why", desc: "Turned static prose into scannable top-level bullet highlights (healthcare, meals, security, location)." },
@@ -226,7 +254,7 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
                 <div key={i} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                   <div className="flex-1 w-full md:text-right">
                     {i % 2 === 0 && (
-                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-yellow-500/50 transition-colors h-full transform-gpu duration-300">
+                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 transition-all duration-300 h-full laser-card">
                         <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
                         <p className="text-zinc-400 text-sm">{node.desc}</p>
                       </div>
@@ -237,7 +265,7 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
                   </div>
                   <div className="flex-1 w-full">
                     {i % 2 !== 0 && (
-                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-yellow-500/50 transition-colors h-full transform-gpu duration-300">
+                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 transition-all duration-300 h-full laser-card">
                         <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
                         <p className="text-zinc-400 text-sm">{node.desc}</p>
                       </div>
