@@ -6,7 +6,7 @@ import { motion, useInView } from "framer-motion";
 
 // --- CSS Device Mockups ---
 const BrowserMockup = () => (
-  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[90%] md:w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(168,85,247,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.15)] hover:-translate-y-2 cursor-pointer relative group">
+  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[90%] md:w-full max-w-4xl mx-auto rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-[0_0_80px_rgba(234,179,8,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(234,179,8,0.15)] hover:-translate-y-2 cursor-pointer relative group">
     <div className="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 space-x-2 relative z-10">
       <div className="w-3 h-3 rounded-full bg-zinc-700 group-hover:bg-red-500 transition-colors" />
       <div className="w-3 h-3 rounded-full bg-zinc-700 group-hover:bg-yellow-500 transition-colors" />
@@ -18,7 +18,7 @@ const BrowserMockup = () => (
 );
 
 const PhoneMockup = () => (
-  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[280px] sm:w-[320px] mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(168,85,247,0.2)] hover:-translate-y-2 transition-transform duration-700 cursor-pointer relative group">
+  <a href="https://conversive.ai/" target="_blank" rel="noopener noreferrer" className="block w-[280px] sm:w-[320px] mx-auto rounded-[3rem] overflow-hidden border-8 border-zinc-900 bg-zinc-950 shadow-[0_0_60px_rgba(234,179,8,0.2)] hover:-translate-y-2 transition-transform duration-700 cursor-pointer relative group">
     {/* Notch */}
     <div className="w-32 h-6 bg-zinc-900 absolute top-0 left-1/2 -translate-x-1/2 rounded-b-xl z-20" />
     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -166,7 +166,7 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   key={i} 
-                  className="group p-6 rounded-2xl bg-zinc-900/30 border border-red-500/20 hover:border-red-500/50 hover:bg-zinc-900/80 transition-all cursor-crosshair overflow-hidden relative
+                  className="group p-6 rounded-2xl bg-zinc-900/30 border border-yellow-500/20 hover:border-yellow-500/50 hover:bg-zinc-900/80 transition-all cursor-crosshair overflow-hidden relative
                              hover:animate-[shake_0.5s_cubic-bezier(.36,.07,.19,.97)_both]"
                 >
                   <style>{`
@@ -177,7 +177,7 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                       40%, 60% { transform: translate3d(4px, 0, 0); }
                     }
                   `}</style>
-                  <div className="text-red-500/20 text-6xl font-black absolute top-2 right-4 pointer-events-none group-hover:text-red-500/40 transition-colors">{i+1}</div>
+                  <div className="text-yellow-500/20 text-6xl font-black absolute top-2 right-4 pointer-events-none group-hover:text-yellow-500/40 transition-colors">{i+1}</div>
                   <h4 className="text-white font-semibold text-lg mb-2 relative z-10">{prob.title}</h4>
                   <p className="text-zinc-500 text-sm relative z-10">{prob.desc}</p>
                 </motion.div>
@@ -194,7 +194,7 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                    ["Dual CTAs", "Provide both a low-commitment trial and a Demo option to reduce friction."]
                  ].map(([title, desc], i) => (
                    <li key={i} className="flex gap-6">
-                     <span className="mt-1 w-6 h-6 rounded-full bg-purple-500/20 border border-purple-500 flex items-center justify-center flex-shrink-0 text-purple-400 text-xs">✓</span>
+                     <span className="mt-1 w-6 h-6 rounded-full bg-yellow-500/20 border border-yellow-500 flex items-center justify-center flex-shrink-0 text-yellow-400 text-xs">✓</span>
                      <div>
                        <strong className="text-white block mb-1">{title}</strong>
                        <span className="text-zinc-400 font-light">{desc}</span>
@@ -226,14 +226,14 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                    <div className="absolute inset-0 transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                      {/* Front */}
                      <div className="absolute inset-0 bg-zinc-900 border border-white/10 rounded-2xl p-8 flex flex-col justify-center items-center text-center [backface-visibility:hidden]">
-                       <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mb-6 text-blue-500">
+                       <div className="w-12 h-12 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center mb-6 text-yellow-500">
                          {i+1}
                        </div>
                        <h3 className="text-white text-xl font-medium">{item.q}</h3>
                        <span className="text-xs text-zinc-600 mt-8 font-mono uppercase tracking-widest">Hover to reveal</span>
                      </div>
                      {/* Back */}
-                     <div className="absolute inset-0 bg-blue-600/10 border border-blue-500/50 rounded-2xl p-8 flex items-center justify-center text-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                     <div className="absolute inset-0 bg-yellow-600/10 border border-yellow-500/50 rounded-2xl p-8 flex items-center justify-center text-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
                        <p className="text-zinc-200 text-sm leading-relaxed">{item.a}</p>
                      </div>
                    </div>
@@ -256,7 +256,7 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                 <svg className="w-full h-full" preserveAspectRatio="none">
                   <motion.line 
                     x1="0" y1="0" x2="0" y2="100%" 
-                    stroke="rgba(168, 85, 247, 0.4)" 
+                    stroke="rgba(234, 179, 8, 0.4)" 
                     strokeWidth="2" 
                     strokeDasharray="6 6"
                     initial={{ pathLength: 0 }}
@@ -277,18 +277,18 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
                   <div key={i} className={`flex flex-col md:flex-row items-center gap-8 ${i%2===0 ? 'md:flex-row-reverse' : ''}`}>
                      <div className="flex-1 w-full md:text-right">
                        {i%2===0 && (
-                         <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-purple-500/50 transition-colors h-full transform-gpu duration-300">
+                         <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-yellow-500/50 transition-colors h-full transform-gpu duration-300">
                            <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
                            <p className="text-zinc-400 text-sm">{node.desc}</p>
                          </div>
                        )}
                      </div>
-                     <div className="w-12 h-12 rounded-full border-4 border-zinc-950 bg-purple-600 shadow-[0_0_20px_rgba(168,85,247,0.5)] z-10 flex items-center justify-center text-white font-bold">
+                     <div className="w-12 h-12 rounded-full border-4 border-zinc-950 bg-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.5)] z-10 flex items-center justify-center text-black font-bold">
                        {i+1}
                      </div>
                      <div className="flex-1 w-full">
                        {i%2!==0 && (
-                         <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-purple-500/50 transition-colors h-full transform-gpu duration-300">
+                         <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-yellow-500/50 transition-colors h-full transform-gpu duration-300">
                            <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
                            <p className="text-zinc-400 text-sm">{node.desc}</p>
                          </div>
@@ -305,7 +305,7 @@ export default function CaseStudyConversive({ onClose, onNext }: { onClose: () =
         {/* PULL QUOTE */}
         <section className="mb-40 flex items-center justify-center py-20 relative px-4">
            <div className="absolute text-[300px] font-serif text-white/[0.03] -mt-32 -ml-20 pointer-events-none select-none">&quot;</div>
-           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
+           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.1),transparent_50%)] pointer-events-none" />
            <div className="max-w-4xl text-center relative z-10">
               <h3 className="text-3xl md:text-5xl font-light text-white italic leading-tight mb-12">
                 &quot;The Conversive site transformed from a generic product brochure into a deeply specialized healthcare solutions portal. Lead quality jumped by 40%.&quot;
