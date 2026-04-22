@@ -48,35 +48,48 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
         @keyframes shimmer { 100% { transform: translateX(100%); } }
         
         @media (min-width: 1024px) {
-          .laser-card {
+          .laser-container {
             position: relative;
-            transition: all 0.3s ease;
+            z-index: 1;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
           }
-          .laser-card::after {
-            content: "";
+          .laser-svg {
             position: absolute;
             inset: -1px;
-            border-radius: inherit;
-            padding: 1px;
-            background: conic-gradient(from 0deg at 50% 50%, transparent 0%, #eab308 10%, transparent 20%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            pointer-events: none;
+            z-index: -1;
+          }
+          .laser-rect-base {
+            stroke: #eab308;
+            stroke-width: 2;
+            stroke-opacity: 0;
+            transition: stroke-opacity 0.3s ease;
+          }
+          .laser-rect-trace {
+            stroke: #eab308;
+            stroke-width: 3;
+            stroke-dasharray: 0.3 0.7;
             opacity: 0;
+            filter: drop-shadow(0 0 12px #eab308) drop-shadow(0 0 4px #eab308);
             transition: opacity 0.3s ease;
           }
-          .laser-card:hover::after {
+          .laser-container:hover {
+            background: rgba(24, 24, 27, 0.95);
+            transform: translateY(-8px);
+          }
+          .laser-container:hover .laser-rect-base {
+            stroke-opacity: 0.2;
+          }
+          .laser-container:hover .laser-rect-trace {
             opacity: 1;
-            animation: spin 3s linear infinite;
+            animation: trace-infinite 3s linear infinite;
           }
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          .laser-card:hover {
-            background: rgba(24, 24, 27, 0.6);
-            transform: translateY(-2px);
+          @keyframes trace-infinite {
+            from { stroke-dashoffset: 1; }
+            to { stroke-dashoffset: 0; }
           }
         }
 
@@ -252,25 +265,25 @@ export default function CaseStudyGemstower({ onClose, onNext }: { onClose: () =>
                 { step: "Multi-Touch CTAs", desc: "Sprinkled streamlined progressive 'Schedule a Tour' forms after the Hero, Highlights, and Healthcare." },
               ].map((node, i) => (
                 <div key={i} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="flex-1 w-full md:text-right">
-                    {i % 2 === 0 && (
-                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 transition-all duration-300 h-full laser-card">
+                   {/* Card Container */}
+                   <div className={`flex-1 w-full ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                     <div className="p-8 rounded-2xl bg-zinc-900/40 transition-all duration-500 h-full laser-container">
+                        <svg className="laser-svg hidden md:block" fill="none">
+                          <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" className="laser-rect-base" />
+                          <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" pathLength="1" className="laser-rect-trace" />
+                        </svg>
                         <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
                         <p className="text-zinc-400 text-sm">{node.desc}</p>
-                      </div>
-                    )}
-                  </div>
-                  <div className="w-12 h-12 rounded-full border-4 border-zinc-950 bg-yellow-600 shadow-[0_0_20px_rgba(234,179,8,0.5)] z-10 flex items-center justify-center text-black font-bold flex-shrink-0">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 w-full">
-                    {i % 2 !== 0 && (
-                      <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 transition-all duration-300 h-full laser-card">
-                        <h4 className="text-white text-xl font-medium mb-2">{node.step}</h4>
-                        <p className="text-zinc-400 text-sm">{node.desc}</p>
-                      </div>
-                    )}
-                  </div>
+                     </div>
+                   </div>
+
+                   {/* Number Indicator (Desktop Only) */}
+                   <div className="hidden md:flex w-12 h-12 rounded-full border-4 border-zinc-950 bg-yellow-600 shadow-[0_0_20px_rgba(234,179,8,0.5)] z-10 items-center justify-center text-black font-bold flex-shrink-0">
+                     {i + 1}
+                   </div>
+
+                   {/* Spacer for alternating layout (Desktop Only) */}
+                   <div className="flex-1 hidden md:block" />
                 </div>
               ))}
             </div>
