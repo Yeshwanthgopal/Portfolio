@@ -6,11 +6,13 @@ import Skills from "@/components/Skills";
 import Projects from "@/components/Projects";
 import Education from "@/components/Education";
 import Preloader from "@/components/Preloader";
+import ContactModal from "@/components/ContactModal";
 
 export default function Home() {
   const [showContent, setShowContent] = useState(false);
   const [skipPreloader, setSkipPreloader] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -39,26 +41,12 @@ export default function Home() {
     const mailtoUrl = `mailto:${email}`;
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-    const isMobile = isIOS || isAndroid;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
     if (isMobile) {
-      if (isIOS) {
-        window.location.href = `googlegmail:///co?to=${email}`;
-        setTimeout(() => {
-          if (document.hasFocus()) window.location.href = mailtoUrl;
-        }, 800);
-      } else {
-        window.location.href = mailtoUrl;
-      }
-    } else {
       window.location.href = mailtoUrl;
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.open(gmailUrl, "_blank");
-        }
-      }, 2000);
+    } else {
+      setShowContactModal(true);
     }
   };
 
@@ -78,13 +66,12 @@ export default function Home() {
           
           <footer className="py-16 border-t border-white/10 bg-zinc-950 text-center text-zinc-500 flex flex-col items-center gap-4">
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 font-mono text-sm uppercase tracking-widest text-zinc-400">
-              <a 
-                href="mailto:yeshwanthgopaljaladi@gmail.com" 
+              <button 
                 onClick={handleCollaborate}
                 className="hover:text-yellow-400 transition-colors"
               >
                 yeshwanthgopaljaladi@gmail.com
-              </a>
+              </button>
               <span className="hidden md:inline text-zinc-700">•</span>
               <a href="tel:+918374141583" className="hover:text-yellow-400 transition-colors">+91 8374141583</a>
             </div>
@@ -92,6 +79,11 @@ export default function Home() {
               © {new Date().getFullYear()} Yeshwanth Gopal Jaladi. All rights reserved.
             </div>
           </footer>
+
+          <ContactModal 
+            isOpen={showContactModal} 
+            onClose={() => setShowContactModal(false)} 
+          />
         </main>
       )}
     </>

@@ -1,5 +1,5 @@
-"use client";
 import React, { useRef, useEffect, MouseEvent, useState } from "react";
+import ContactModal from "./ContactModal";
 
 const LEAVES = Array.from({ length: 30 }).map((_, i) => ({
   id: i,
@@ -18,6 +18,7 @@ export default function HeroSection() {
   const [isGlitching, setIsGlitching] = useState(false);
   const [isSwapped, setIsSwapped] = useState(false);
   const [isGameOpen, setIsGameOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -125,33 +126,14 @@ export default function HeroSection() {
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
 
     // Detection
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-    const isMobile = isIOS || isAndroid;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
     if (isMobile) {
-      if (isIOS) {
-        // Try to force Gmail app on iOS, fallback to mailto
-        window.location.href = `googlegmail:///co?to=${email}`;
-        setTimeout(() => {
-          if (document.hasFocus()) window.location.href = mailtoUrl;
-        }, 800);
-      } else {
-        window.location.href = mailtoUrl;
-      }
-    } else {
-      // Desktop: Open mailto first (triggers OS prompt)
+      // Mobile: Open default mail app directly
       window.location.href = mailtoUrl;
-      
-      // If user is still on page after 2 seconds, they either:
-      // 1. Don't have a mail app set up
-      // 2. Selected a browser that opened a blank page
-      // In these cases, we open Gmail web as the reliable fallback
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.open(gmailUrl, "_blank");
-        }
-      }, 2000);
+    } else {
+      // Desktop: Show custom selection modal
+      setShowContactModal(true);
     }
   };
 
@@ -333,8 +315,7 @@ export default function HeroSection() {
 
             {/* ACTION BUTTONS */}
             <div className="slide-up-3 mt-4 md:mt-6 pointer-events-auto flex flex-wrap justify-center md:justify-start items-center gap-2 md:gap-4 w-full">
-              <a 
-                href="mailto:yeshwanthgopaljaladi@gmail.com" 
+              <button 
                 onClick={handleCollaborate}
                 className="rounded-full bg-yellow-500 text-black font-semibold px-5 py-3 text-[13px] md:px-8 md:py-4 md:text-[16px] flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)]"
               >
@@ -343,7 +324,7 @@ export default function HeroSection() {
                   <line x1="7" y1="17" x2="17" y2="7"></line>
                   <polyline points="7 7 17 7 17 17"></polyline>
                 </svg>
-              </a>
+              </button>
               
               <button 
                 onClick={() => setIsGameOpen(true)}
@@ -427,47 +408,28 @@ export default function HeroSection() {
 
         {/* ZENITSU RUN MODAL (IFRAME) */}
         {isGameOpen && (
-          <div 
-            className="fixed inset-0 z-[100] flex items-start md:items-center justify-center bg-black/90 backdrop-blur-md pointer-events-auto pt-16 md:pt-0"
-            onPointerDown={() => {
-              const iframe = document.getElementById("zenitsu-game-iframe") as HTMLIFrameElement;
-              if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage("JUMP", "*");
-              }
-            }}
-          >
-            <div className="relative w-[95%] max-w-[800px] h-[400px] md:h-[500px] bg-zinc-950 border-4 border-yellow-500 rounded-xl shadow-[0_0_80px_rgba(234,179,8,0.3)] overflow-hidden flex flex-col">
-              
-              {/* Custom Header Bar */}
-              <div className="bg-zinc-900 border-b border-yellow-500/30 px-4 py-3 flex justify-between items-center z-10">
-                <span className="text-yellow-500 font-bold tracking-widest" style={{ fontFamily: "'Courier New', Courier, monospace" }}>ZENITSU_RUN.EXE</span>
-                <button 
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={(e) => { e.stopPropagation(); setIsGameOpen(false); }}
-                  className="text-zinc-400 hover:text-red-500 transition-colors pointer-events-auto"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-              </div>
-
-              {/* Game Iframe */}
-              <div className="flex-1 w-full relative bg-[#03030f]">
-                 <iframe 
-                   id="zenitsu-game-iframe"
-                   src="/zenitsu.html" 
-                   className="absolute inset-0 w-full h-full border-0" 
-                   title="Zenitsu Run Canvas Game"
-                   onLoad={(e) => {
-                     const iframe = e.target as HTMLIFrameElement;
-                     iframe.contentWindow?.focus();
-                   }}
-                 />
-              </div>
-
+          <div className="fixed inset-0 z-[10000] bg-black flex items-center justify-center p-0 md:p-10 overflow-hidden">
+            <div className="relative w-full h-full max-w-6xl aspect-[16/9] bg-[#111] rounded-none md:rounded-3xl border-0 md:border-[12px] border-zinc-900 shadow-2xl overflow-hidden scale-[0.95] md:scale-100 -translate-y-12 md:translate-y-0">
+               <button 
+                 onClick={() => setIsGameOpen(false)}
+                 className="absolute top-4 right-4 z-[10001] w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+               >
+                 ✕
+               </button>
+               <iframe 
+                 src="/zenitsu.html" 
+                 className="w-full h-full border-0"
+                 title="Zenitsu Runner"
+               />
             </div>
           </div>
         )}
 
+        {/* Contact Modal */}
+        <ContactModal 
+          isOpen={showContactModal} 
+          onClose={() => setShowContactModal(false)} 
+        />
       </section>
     </>
   );
